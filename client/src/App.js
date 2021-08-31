@@ -31,6 +31,7 @@ export default function App() {
   const [catagory, setCatagory] = useState("");
   const [link, setLink] = useState("");
   const [image, setImage] = useState("");
+  const [noOfBooks, setNoOfBooks] = useState(6);
 
   async function handleImageUpload(e) {
     let image = e.target.files[0];
@@ -88,60 +89,72 @@ export default function App() {
         <div className="heading">book library</div>
         <Switch>
           <Route path="/" exact>
-            <input
-              type="text"
-              placeholder="search"
-              onChange={(e) => {
-                setFilterValue(e.target.value);
-              }}
-            />
-            <label>
+            <>
               <input
-                type="checkbox"
-                onChange={() => {
-                  if (!isEnglish) {
-                    setIsEnglish(true);
-                  } else if (isEnglish) {
-                    setIsEnglish(false);
-                  }
+                type="text"
+                placeholder="search"
+                onChange={(e) => {
+                  setFilterValue(e.target.value);
                 }}
               />
-              catagory is English
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                onChange={() => {
-                  if (!isScience) {
-                    setIsScience(true);
-                  } else if (isScience) {
-                    setIsScience(false);
-                  }
+              <label>
+                <input
+                  type="checkbox"
+                  onChange={() => {
+                    if (!isEnglish) {
+                      setIsEnglish(true);
+                    } else if (isEnglish) {
+                      setIsEnglish(false);
+                    }
+                  }}
+                />
+                catagory is English
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  onChange={() => {
+                    if (!isScience) {
+                      setIsScience(true);
+                    } else if (isScience) {
+                      setIsScience(false);
+                    }
+                  }}
+                />
+                catagory is Science
+              </label>
+              <div className="content">
+                {books
+                  .filter((book, index) =>
+                    isScience
+                      ? book.bookCatagory === "science"
+                      : book.bookCatagory && isEnglish
+                      ? book.bookCatagory === "english"
+                      : book.bookCatagory &&
+                        book.bookName.includes(filterValue) &&
+                        index < noOfBooks
+                  )
+                  .map((book) => {
+                    return (
+                      <Card
+                        name={book.bookName}
+                        author={book.bookAuthor}
+                        description={book.bookDescription}
+                        link={book.bookLink}
+                        img={book.bookImage}
+                      />
+                    );
+                  })}
+              </div>
+              <button
+                style={{ margin: "2em 0em" }}
+                onClick={() => {
+                  setNoOfBooks(noOfBooks + noOfBooks);
                 }}
-              />
-              catagory is Science
-            </label>
-            <div className="content">
-              {books
-                .filter((book) =>
-                  isScience
-                    ? book.bookCatagory === "science"
-                    : book.bookCatagory && isEnglish
-                    ? book.bookCatagory === "english"
-                    : book.bookCatagory && book.bookName.includes(filterValue)
-                )
-                .map((book) => {
-                  return (
-                    <Card
-                      name={book.bookName}
-                      author={book.bookAuthor}
-                      description={book.bookDescription}
-                      link={book.bookLink}
-                      img={book.bookImage}
-                    />
-                  );
-                })}
-            </div>
+              >
+                load more
+              </button>
+            </>
           </Route>
           <Route path="/create">
             <>
