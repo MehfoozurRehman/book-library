@@ -44,7 +44,7 @@ app.post("/v1/createBook", (req, res) => {
 });
 
 app.get("/v1/findAllBooks", (req, res) => {
-  bookModal.find((err, data) => {
+  bookModal.find({}, (err, data) => {
     if (err) {
       res.status(500).send(err);
     } else {

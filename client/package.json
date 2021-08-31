@@ -7,6 +7,8 @@
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "axios": "^0.21.1",
+    "browser-image-compression": "^1.0.15",
+    "image-to-base64": "^2.2.0",
     "node-sass": "4.14.1",
     "pusher-js": "^7.0.3",
     "react": "^17.0.2",

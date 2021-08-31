@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import "./App.scss";
-import image from "./Assets/book__picture.jpg";
+// import image from "./Assets/book__picture.jpg";
 import axios from "./axios";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import imageToBase64 from "image-to-base64/browser";
+import imageCompression from "browser-image-compression";
 
 function Card({ name, author, description, img, link }) {
   return (
     <div className="card">
-      <img src={img} alt="" className="card__img" />
+      <img src={"data:image/png;base64," + img} alt="" className="card__img" />
       <div className="card__name">{name}</div>
       <div className="card__author">{author}</div>
       <div className="card__description">{description}</div>
@@ -28,6 +30,29 @@ export default function App() {
   const [description, setDescription] = useState("");
   const [catagory, setCatagory] = useState("");
   const [link, setLink] = useState("");
+  const [image, setImage] = useState("");
+
+  async function handleImageUpload(e) {
+    let image = e.target.files[0];
+    const options = {
+      maxSizeMB: 0.02,
+      maxWidthOrHeight: 300,
+      useWebWorker: true,
+    };
+    try {
+      const compressedFile = await imageCompression(image, options);
+      imageToBase64(URL.createObjectURL(compressedFile)) // Path to the image
+        .then((response) => {
+          console.log(response); // "cGF0aC90by9maWxlLmpwZw=="
+          setImage(response);
+        })
+        .catch((error) => {
+          console.log(error); // Logs an error if there was one
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -38,6 +63,7 @@ export default function App() {
         bookDescription: description,
         bookCatagory: catagory,
         bookLink: link,
+        bookImage: image,
       })
       .then(alert("book created successfully"))
       .catch((err) => {
@@ -111,7 +137,7 @@ export default function App() {
                       author={book.bookAuthor}
                       description={book.bookDescription}
                       link={book.bookLink}
-                      img={image}
+                      img={book.bookImage}
                     />
                   );
                 })}
@@ -159,6 +185,11 @@ export default function App() {
                     setLink(e.target.value);
                   }}
                   required
+                />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
                 />
                 <button onClick={handleSubmit}>create book</button>
               </form>
